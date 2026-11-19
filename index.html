@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T4Typing – Free Typing Speed Test</title>
+<meta name="description" content="Test your typing speed with real sentences. Free, fast, no sign-up. Track your WPM and accuracy.">
+<meta name="theme-color" content="#050816">
+<meta property="og:title" content="T4Typing – Free Typing Speed Test">
+<meta property="og:description" content="Test your typing speed with real sentences. Free, fast, no sign-up.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236366f1'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='white' font-family='monospace'%3Ek%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;--bg1:#050816;--bg2:#0e1a3d;--blob1:#6366f1;--blob2:#14b8a6;--blob3:#f59e0b;
+  --glass:rgba(255,255,255,.07);--glass-b:rgba(255,255,255,.16);
+  --text:#f1f5ff;--muted:#9aa7cf;--ok:#34d399;--bad:#f87171;--accent:#818cf8;
+  --font-h:'Space Grotesk',system-ui,sans-serif;--font-m:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+[data-theme="light"]{
+  color-scheme:light;--bg1:#eef2ff;--bg2:#e0f7f4;--blob1:#818cf8;--blob2:#5eead4;--blob3:#fcd34d;
+  --glass:rgba(255,255,255,.6);--glass-b:rgba(255,255,255,.95);
+  --text:#14183a;--muted:#55608a;--ok:#059669;--bad:#dc2626;--accent:#4f46e5;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:96px;scroll-behavior:smooth}
+body{font-family:var(--font-h);color:var(--text);background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden}
+.blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:.55;z-index:-1;animation:float 18s ease-in-out infinite alternate}
+.b1{width:420px;height:420px;background:var(--blob1);top:-100px;left:-80px}
+.b2{width:380px;height:380px;background:var(--blob2);bottom:-120px;right:-60px;animation-delay:-6s}
+.b3{width:260px;height:260px;background:var(--blob3);top:48%;left:46%;animation-delay:-12s;opacity:.18}
+@keyframes float{to{transform:translate(60px,-50px) scale(1.15)}}
+.glass{background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.12)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* loader */
+#loader{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:linear-gradient(135deg,var(--bg1),var(--bg2));transition:opacity .6s,visibility .6s}
+#loader.done{opacity:0;visibility:hidden}
+.load-box{text-align:center}
+.load-keys{display:flex;gap:6px;justify-content:center;margin-bottom:18px}
+.load-keys span{width:clamp(28px,8vw,40px);height:clamp(32px,9vw,46px);display:grid;place-items:center;border-radius:10px;font-family:var(--font-m);font-weight:500;background:var(--glass);border:1px solid var(--glass-b);animation:press 1s ease-in-out infinite}
+@keyframes press{0%,100%{transform:translateY(0)}40%{transform:translateY(6px);background:var(--accent);color:#fff}}
+.bar{width:220px;height:4px;background:var(--glass);border-radius:4px;overflow:hidden;margin:0 auto}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blob1),var(--blob2));animation:fill 1.6s ease forwards}
+@keyframes fill{to{width:100%}}
+
+
+/* animated T4Typing letters */
+.kt{display:inline-flex}
+.kt i{font-style:normal;display:inline-block;animation:wave 2.6s ease-in-out infinite;animation-delay:calc(var(--i)*.11s);transition:transform .25s}
+.kt i:hover{transform:translateY(-8px) rotate(-8deg) scale(1.25);color:var(--blob2)}
+@keyframes wave{0%,60%,100%{transform:translateY(0);color:var(--text)}25%{transform:translateY(-5px);color:var(--accent)}40%{transform:translateY(0);color:var(--blob2)}}
+.logo b{animation:pulse 2.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,.5)}50%{box-shadow:0 0 0 8px rgba(99,102,241,0)}}
+
+/* navbar */
+nav{position:sticky;top:12px;z-index:30;margin:12px auto 0;width:min(1200px,calc(100% - 24px));display:flex;align-items:center;gap:14px;padding:10px 16px;border-radius:18px}
+.logo{font-weight:700;font-size:1.3rem;display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit}
+.logo b{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--blob1),var(--blob2));color:#fff;font-family:var(--font-m)}
+.links{display:flex;gap:4px;margin-left:auto}
+.links a{padding:8px 14px;border-radius:12px;color:var(--muted);text-decoration:none;font-weight:500;transition:.2s}
+.links a:hover,.links a.on{background:var(--glass);color:var(--text)}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);font-size:1.1rem}
+.icon-btn:hover{transform:scale(1.07)}
+#menu{display:none}
+
+/* layout */
+.wrap{flex:1;width:min(1200px,calc(100% - 24px));margin:18px auto;display:grid;grid-template-columns:270px 1fr;gap:18px;align-items:start}
+aside{padding:20px;position:sticky;top:90px;transition:transform .35s}
+aside h3{font-size:.95rem;color:var(--muted);margin:18px 0 10px;font-weight:500}
+aside h3:first-child{margin-top:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 14px;border-radius:12px;border:1px solid var(--glass-b);background:transparent;font-weight:500;transition:.2s}
+.chip:hover{background:var(--glass)}
+.chip.on{background:linear-gradient(135deg,var(--blob1),var(--blob2));color:#fff;border-color:transparent}
+#hist{list-style:none;padding:0;display:grid;gap:8px;font-family:var(--font-m);font-size:.85rem}
+#hist li{display:flex;justify-content:space-between;padding:8px 12px;border-radius:10px;background:var(--glass)}
+#hist .empty{color:var(--muted);justify-content:center}
+.scrim{display:none}
+
+/* word of the day */
+.wotd{padding:20px 26px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.wotd h2{font-size:clamp(1.6rem,3.5vw,2.2rem);margin-top:8px;background:linear-gradient(135deg,var(--blob1),var(--blob2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.wotd .pos{font-family:var(--font-m);font-size:.9rem;margin-left:10px;color:var(--muted);-webkit-text-fill-color:var(--muted)}
+.wotd p{color:var(--muted);margin-top:6px;line-height:1.5;max-width:60ch}
+.wotd .ex{font-style:italic;color:var(--text);opacity:.85}
+.wotd .tag{display:inline-block;padding:3px 12px;border-radius:20px;background:var(--glass);border:1px solid var(--glass-b);font-size:.82rem;color:var(--muted)}
+/* main */
+main{display:grid;gap:18px;min-width:0}
+.hero{padding:26px 28px}
+.hero h1{font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1}
+.hero p{color:var(--muted);margin-top:8px;max-width:52ch}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{padding:16px;text-align:center}
+.stat strong{display:block;font-size:clamp(1.5rem,3.5vw,2.2rem);font-variant-numeric:tabular-nums}
+.stat span{font-size:.85rem;color:var(--muted)}
+.stat.hl strong{color:var(--accent)}
+.arena{padding:28px;position:relative;cursor:text;min-height:240px}
+#text{font-family:var(--font-m);font-size:clamp(1.05rem,2.3vw,1.45rem);line-height:2;letter-spacing:.01em;max-height:11.5em;overflow:hidden;user-select:none;word-break:break-word}
+#text span{color:var(--muted);opacity:.7;transition:color .1s}
+#text span.ok{color:var(--ok);opacity:1}
+#text span.bad{color:var(--bad);opacity:1;background:rgba(251,113,133,.18);border-radius:3px}
+#text span.cur{opacity:1;color:var(--text);box-shadow:-2px 0 0 var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{box-shadow:-2px 0 0 transparent}}
+#hint{position:absolute;inset:0;display:grid;place-items:center;border-radius:20px;background:rgba(10,10,30,.25);backdrop-filter:blur(5px);font-weight:500;transition:.3s;text-align:center;padding:20px}
+.arena.go #hint{opacity:0;visibility:hidden}
+#inp{position:absolute;opacity:0;pointer-events:none;left:0;top:0;width:1px;height:1px}
+.progress{height:5px;border-radius:5px;background:var(--glass);margin-top:18px;overflow:hidden}
+.progress i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--blob1),var(--blob2));transform-origin:left;transition:transform .25s linear}
+.actions{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.btn{padding:11px 22px;border-radius:14px;border:1px solid var(--glass-b);background:var(--glass);font-weight:700;transition:.2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.pri{background:linear-gradient(135deg,var(--blob1),var(--blob2));color:#fff;border-color:transparent}
+.tips{padding:20px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tips h4{margin-bottom:4px}.tips p{color:var(--muted);font-size:.92rem;line-height:1.5}
+
+/* modal */
+#modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(5,5,20,.5);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:.3s;padding:16px}
+#modal.show{opacity:1;visibility:visible}
+.card{padding:32px;width:min(420px,100%);text-align:center;transform:scale(.9) translateY(20px);transition:.35s cubic-bezier(.2,1.4,.4,1)}
+#modal.show .card{transform:none}
+.big{font-size:4.2rem;font-weight:700;line-height:1;background:linear-gradient(135deg,var(--blob1),var(--blob2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.card .row{display:flex;justify-content:center;gap:28px;margin:18px 0;color:var(--muted)}
+.card .row b{display:block;color:var(--text);font-size:1.4rem}
+#badge{display:inline-block;margin-bottom:10px;padding:4px 12px;border-radius:20px;background:var(--glass);font-size:.85rem}
+
+/* footer */
+footer{width:min(1200px,calc(100% - 24px));margin:0 auto 14px;padding:28px 28px 18px;color:var(--muted);font-size:.92rem}
+.f-grid{display:grid;grid-template-columns:1.6fr 1fr 1.2fr;gap:28px}
+.f-brand p{margin-top:10px;max-width:34ch;line-height:1.55}
+footer h4{color:var(--text);margin-bottom:10px;font-size:1rem}
+footer .col a{display:block;color:var(--muted);text-decoration:none;padding:4px 0;transition:.2s}
+footer .col a:hover{color:var(--text);transform:translateX(3px)}
+.f-bottom{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;margin-top:22px;padding-top:16px;border-top:1px solid var(--glass-b)}
+.f-bottom a{color:var(--accent);font-weight:700;text-decoration:none}.f-bottom a:hover{text-decoration:underline}
+.handle{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--glass-b);color:var(--text)!important;font-weight:500}
+
+/* responsive */
+@media(max-width:900px){
+  .f-grid{grid-template-columns:1fr 1fr}.f-brand{grid-column:1/-1}
+  .wrap{grid-template-columns:1fr}
+  #menu{display:grid;place-items:center}
+  .links{display:none}
+  #snd{margin-left:auto}
+  aside{position:fixed;z-index:50;top:0;left:0;bottom:0;width:min(300px,85%);border-radius:0 20px 20px 0;transform:translateX(-105%);overflow:auto;visibility:hidden;transition:transform .35s,visibility .35s}
+  aside.open{transform:none;visibility:visible}
+  .scrim.open{display:block;position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45)}
+  .tips{grid-template-columns:1fr}
+}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.arena{padding:18px}footer{text-align:center}.f-grid{grid-template-columns:1fr}.f-brand p{margin-inline:auto}.f-bottom{justify-content:center}.handle{justify-content:center}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<noscript><p style="padding:20px;text-align:center">T4Typing needs JavaScript. Please turn it on to take the typing test.</p></noscript>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<div id="loader"><div class="load-box">
+  <div class="load-keys"><span style="animation-delay:0.0s">T</span><span style="animation-delay:0.1s">4</span><span style="animation-delay:0.2s">T</span><span style="animation-delay:0.3s">Y</span><span style="animation-delay:0.4s">P</span><span style="animation-delay:0.5s">I</span><span style="animation-delay:0.6s">N</span><span style="animation-delay:0.7s">G</span><span style="animation-delay:0.8s">🎯</span></div>
+  <div class="bar"><i></i></div>
+</div></div>
+
+<nav class="glass">
+  <button id="menu" class="icon-btn" aria-label="Open settings">☰</button>
+  <a class="logo" href="#"><b>T</b><span class="kt">T4Typing</span></a>
+  <div class="links"><a class="on" href="#test">Test</a><a href="#tips">Tips</a><a href="#about">About</a></div>
+  <button id="snd" class="icon-btn" aria-label="Turn sound off" aria-pressed="true">🔊</button>
+  <button id="theme" class="icon-btn" aria-label="Switch light or dark theme">◐</button>
+</nav>
+
+<div class="wrap">
+  <aside class="glass" id="side" aria-label="Settings">
+    <h3>Time</h3>
+    <div class="chips" data-key="time">
+      <button class="chip on" data-v="60">1 min</button><button class="chip" data-v="180">3 min</button><button class="chip" data-v="300">5 min</button><button class="chip" data-v="600">10 min</button><button class="chip" data-v="1800">30 min</button>
+    </div>
+    <h3>Text</h3>
+    <div class="chips" data-key="mode">
+      <button class="chip on" data-v="sentences">Sentences</button><button class="chip" data-v="words">Random words</button>
+    </div>
+    <h3>Difficulty</h3>
+    <div class="chips" data-key="level">
+      <button class="chip on" data-v="easy">Easy</button><button class="chip" data-v="medium">Medium</button><button class="chip" data-v="hard">Hard</button>
+    </div>
+    <h3>Personal best</h3>
+    <div class="stat glass" style="padding:12px"><strong id="best">0</strong><span>words per minute</span></div>
+    <h3>Recent tests</h3>
+    <ul id="hist"><li class="empty">No tests yet</li></ul>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main id="test">
+    <section class="hero glass">
+      <h1>How fast can you type a sentence?</h1>
+      <p>Click the box and start typing. Text is random every time. The timer begins on your first key.</p>
+    </section>
+    <section class="wotd glass" aria-label="Word of the day">
+      <div>
+        <span class="tag" id="wdd"></span>
+        <h2><span id="wdw"></span><span class="pos" id="wdp"></span></h2>
+        <p id="wdm"></p>
+        <p class="ex" id="wde"></p>
+      </div>
+      <button class="btn" id="wdbtn">Practice this word</button>
+    </section>
+    <section class="stats">
+      <div class="stat glass hl"><strong id="wpm">0</strong><span>WPM</span></div>
+      <div class="stat glass"><strong id="acc">100%</strong><span>Accuracy</span></div>
+      <div class="stat glass"><strong id="time">1:00</strong><span>Time left</span></div>
+      <div class="stat glass"><strong id="err">0</strong><span>Mistakes</span></div>
+    </section>
+    <section class="arena glass" id="arena">
+      <div id="text" aria-live="off"></div>
+      <div id="hint">Click here and start typing</div>
+      <textarea id="inp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Typing input"></textarea>
+      <div class="progress"><i id="prog"></i></div>
+      <div class="actions"><button class="btn pri" id="restart">Restart</button><button class="btn" id="newtext">New sentences</button></div>
+    </section>
+    <section class="tips glass" id="tips">
+      <div><h4>Keep your eyes on the text</h4><p>Looking at the keyboard slows you down. Learn where the keys are by feel.</p></div>
+      <div><h4>Accuracy before speed</h4><p>Fixing mistakes costs more time than typing slowly. Speed follows accuracy.</p></div>
+      <div id="about"><h4>Free and private</h4><p>T4Typing runs in your browser. Nothing you type is sent anywhere.</p></div>
+    </section>
+  </main>
+</div>
+
+<footer class="glass">
+  <div class="f-grid">
+    <div class="f-brand">
+      <a class="logo" href="#"><b>k</b><span class="kt">T4Typing</span></a>
+      <p>A free typing speed test. No sign-up, no tracking. Just you and the keys.</p>
+    </div>
+    <div class="col">
+      <h4>Explore</h4>
+      <a href="#test">Typing test</a><a href="#tips">Typing tips</a><a href="#about">About</a>
+    </div>
+    <div class="col">
+      <h4>Creator</h4>
+      <a class="handle" href="https://www.instagram.com/vinay_tiwari" target="_blank" rel="noopener">@vinay_codemy</a>
+      <a href="https://www.instagram.com/vinay_tiwari" target="_blank" rel="noopener">Follow for more coding projects</a>
+    </div>
+  </div>
+  <div class="f-bottom">
+    <span>© <span id="yr"></span> T4Typing. All rights reserved.</span>
+    <span>Designed &amp; built by <a href="https://www.instagram.com/vinay_tiwari" target="_blank" rel="noopener">@vinay_codemy</a></span>
+  </div>
+</footer>
+
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="card glass">
+  <span id="badge">Time’s up</span>
+  <div class="big" id="rw">0</div>
+  <p id="mt" style="color:var(--muted);margin-top:4px">words per minute</p>
+  <div class="row"><div><b id="ra">0%</b>accuracy</div><div><b id="re">0</b>mistakes</div></div>
+  <button class="btn pri" id="again">Try again</button>
+</div></div>
+
+<script>
+const S={
+easy:["The sun rises over the quiet hills every morning.","She walked to the market and bought fresh bread.","We play games in the garden after school.","A small cat slept on the warm window seat.","Please close the door when you leave the room.","The river runs slowly through the green valley.","He drinks a cup of hot tea before work.","Birds sing early when the day is new.","Our team won the match with a late goal.","I like to read a good book at night."],
+medium:["Practice builds confidence, and confidence makes every difficult task feel lighter.","The train to the coast leaves at noon, so we should pack before breakfast.","A good question can teach you more than a hundred easy answers.","Rain tapped on the roof while the old clock counted the slow hours.","Consistency matters more than talent when you are learning something new.","They built a small library in the village, and children came from miles around.","Every great website starts as a simple idea and a blank page.","Careful readers notice details that others hurry past without a glance."],
+hard:["\"Well, isn't that curious?\" she said; the lantern flickered, and nobody answered.","By 9:45 p.m., 17 volunteers had packed 328 boxes - an astonishing result!","Although it's tempting to rush, precision (not haste) wins the race, doesn't it?","The architect's blueprint, revised thrice, finally satisfied the committee's demands.","\"Quick, bring the umbrella!\" he shouted; thunder rolled across the harbour.","Freelancers juggle invoices, deadlines, and unexpected emails: it's a delicate balance.","Zebras, quietly grazing, ignored the jeep's engine and the photographers' excitement.","Between 2019 and 2024, the company's revenue grew 4.5x; however, costs rose too."]
+};
+const $=id=>document.getElementById(id);
+const cfg={time:60,level:"easy",mode:"sentences"};
+const W="time year people way day man thing woman life child world school state family student group country problem hand part place case week company system program question work government number night point home water room mother area money story fact month lot right study book eye job word business issue side kind head house service friend father power hour game line end member law car city community name team minute idea body information back parent face level office door health person art war history party result change morning reason research girl guy moment air teacher force education foot boy age policy music market sense nation plan college interest death experience effect class control care field development role effort rate heart drug show leader light voice wife police mind price report decision son view relationship town road arm difference value building action model season society tax director position player record paper space ground form event official matter center couple site project activity star table need court oil situation cost industry figure street image phone data picture practice piece land product doctor wall patient worker news test movie north love support technology step baby computer type attention film tree source organization hair window culture chance brother energy period course summer plant opportunity term letter condition choice".split(" ");
+let lastS=-1;
+let text="",typed="",errs=0,started=false,over=false,left=30,tick=null,t0=0,hist=[],best=0;
+
+try{hist=JSON.parse(localStorage.getItem("ks_hist")||"[]");best=+localStorage.getItem("ks_best")||0;const th=localStorage.getItem("ks_theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
+document.querySelectorAll(".kt").forEach(el=>{el.setAttribute("aria-label","T4Typing");el.innerHTML=[...el.textContent].map((c,i)=>`<i aria-hidden="true" style="--i:${i}">${c}</i>`).join("")});
+$("yr").textContent=new Date().getFullYear();
+setTimeout(()=>$("loader").classList.add("done"),1700);
+
+const WD=[["serendipity","noun","Finding something good by chance.","Meeting my best friend was pure serendipity."],["ephemeral","adjective","Lasting for a very short time.","The beauty of cherry blossoms is ephemeral."],["resilient","adjective","Able to recover quickly after difficulty.","She stayed resilient after every setback."],["meticulous","adjective","Showing great attention to detail.","He kept meticulous notes of every lesson."],["eloquent","adjective","Fluent and persuasive in speaking or writing.","Her eloquent speech moved the whole room."],["ubiquitous","adjective","Found everywhere at the same time.","Smartphones have become ubiquitous."],["pragmatic","adjective","Dealing with things in a practical way.","A pragmatic plan beats a perfect idea."],["benevolent","adjective","Kind and generous toward others.","The benevolent teacher helped every student."],["candid","adjective","Honest and straightforward.","I appreciate your candid feedback."],["diligent","adjective","Hardworking and careful.","A diligent learner improves every day."],["enigma","noun","A person or thing that is mysterious.","The old map remained an enigma."],["fortitude","noun","Courage in pain or adversity.","She faced the challenge with great fortitude."],["gregarious","adjective","Fond of company; sociable.","He is gregarious and loves meeting new people."],["harmony","noun","A pleasing combination of parts or people.","The choir sang in perfect harmony."],["impeccable","adjective","Without any fault or mistake.","Her timing was impeccable."],["jubilant","adjective","Feeling great happiness and triumph.","The crowd was jubilant after the win."],["kindle","verb","To start a fire or spark an interest.","A good book can kindle a love of learning."],["lucid","adjective","Clear and easy to understand.","He gave a lucid explanation of the problem."],["mellow","adjective","Soft, gentle and relaxed.","The mellow music filled the evening."],["nimble","adjective","Quick and light in movement or thought.","Nimble fingers fly across the keyboard."],["optimistic","adjective","Hopeful about the future.","Stay optimistic and keep practising."],["perseverance","noun","Steady effort despite difficulty.","Perseverance turns slow progress into success."],["quaint","adjective","Attractively old-fashioned.","We walked through a quaint little village."],["radiant","adjective","Shining brightly; full of joy.","She looked radiant on her big day."],["sincere","adjective","Genuine and honest.","Please accept my sincere thanks."],["tenacious","adjective","Holding firmly to a goal.","A tenacious coder never gives up on a bug."],["unwavering","adjective","Steady and not changing.","He showed unwavering focus in every test."],["vivid","adjective","Bright, clear and full of life.","I have a vivid memory of that summer."],["wisdom","noun","The quality of having good judgement.","Wisdom grows from experience and reflection."],["zenith","noun","The highest point reached.","The sun reached its zenith at noon."]];
+const _d=new Date(),dayN=Math.floor(Date.UTC(_d.getFullYear(),_d.getMonth(),_d.getDate())/864e5),wd=WD[dayN%WD.length];
+$("wdd").textContent="Word of the day, "+_d.toLocaleDateString(undefined,{day:"numeric",month:"short"});
+$("wdw").textContent=wd[0];$("wdp").textContent=wd[1];$("wdm").textContent=wd[2];$("wde").textContent="“"+wd[3]+"”";
+let fixed=false;
+const fmtLeft=n=>{if(cfg.time<60)return n;return Math.floor(n/60)+":"+String(n%60).padStart(2,"0")};
+const fmtDur=t=>t>=60?(t/60)+"m":t+"s";
+let audioCtx=null,soundOn=true;
+try{soundOn=localStorage.getItem("ks_sound")!=="off"}catch(e){}
+function ac(){if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+function tone(f,d,type,v,to){if(!soundOn)return;const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}
+const clickSnd=()=>tone(650+Math.random()*180,.05,"triangle",.14,320);
+const beepSnd=()=>tone(210,.2,"square",.09,170);
+const doneSnd=()=>{tone(660,.18,"sine",.15);setTimeout(()=>tone(880,.28,"sine",.15),150)};
+function drawSnd(){const b=$("snd");b.textContent=soundOn?"🔊":"🔇";b.setAttribute("aria-pressed",soundOn);b.setAttribute("aria-label",soundOn?"Turn sound off":"Turn sound on")}
+$("snd").onclick=()=>{soundOn=!soundOn;try{localStorage.setItem("ks_sound",soundOn?"on":"off")}catch(e){}drawSnd();clickSnd()};
+drawSnd();
+const rnd=n=>Math.random()*n|0;
+function randWords(need){
+  let out="",cap=true;
+  while(out.length<need){
+    let w=W[rnd(W.length)];
+    if(cfg.level==="medium"){
+      if(cap||rnd(9)===0)w=w[0].toUpperCase()+w.slice(1);
+      cap=false;
+      if(rnd(7)===0){w+=",";}
+      else if(rnd(10)===0){w+=".";cap=true}
+    }else if(cfg.level==="hard"){
+      if(cap||rnd(8)===0)w=w[0].toUpperCase()+w.slice(1);
+      cap=false;
+      const r=rnd(12);
+      if(r===0)w=String(rnd(900)+10);
+      else if(r===1)w='"'+w+'"';
+      else if(r===2)w+="!";
+      else if(r===3)w+=";";
+      else if(r===4)w+="?",cap=true;
+      else if(r===5)w=w+"-"+W[rnd(W.length)];
+      else if(r===6){w+=".";cap=true}
+    }
+    out+=(out?" ":"")+w;
+  }
+  return out.trim();
+}
+function build(extra){
+  const need=extra?160:420;
+  if(cfg.mode==="words")return(extra?" ":"")+randWords(need);
+  const pool=S[cfg.level];let out=extra?" ":"";
+  while(out.length<need){
+    let i;do{i=rnd(pool.length)}while(i===lastS&&pool.length>1);lastS=i;
+    out+=(out.trim()?" ":"")+pool[i];
+  }
+  return out;
+}
+let rendered="",prevTyped=0;
+function addSpans(box,str){const f=document.createDocumentFragment();for(const c of str){const sp=document.createElement("span");sp.textContent=c;f.appendChild(sp)}box.appendChild(f)}
+function render(full){
+  const box=$("text");
+  if(!rendered||!text.startsWith(rendered)){box.innerHTML="";addSpans(box,text);rendered=text;full=true}
+  else if(text.length>rendered.length){addSpans(box,text.slice(rendered.length));rendered=text}
+  const sp=box.children;
+  const lo=full?0:Math.max(0,Math.min(prevTyped,typed.length)-1),hi=full?sp.length:Math.min(sp.length,Math.max(prevTyped,typed.length)+2);
+  for(let i=lo;i<hi;i++)sp[i].className=i<typed.length?(typed[i]===text[i]?"ok":"bad"):i===typed.length?"cur":"";
+  prevTyped=typed.length;
+  const cur=sp[typed.length];
+  if(cur){const top=cur.offsetTop-box.offsetTop;if(top>box.clientHeight*.45||top<box.scrollTop)box.scrollTop=Math.max(0,top-box.clientHeight*.3)}
+}
+function stats(){
+  let ok=0;for(let i=0;i<typed.length;i++)if(typed[i]===text[i])ok++;
+  const el=Math.min((over?tEnd:performance.now())-t0,cfg.time*1000),mins=Math.max(el,2000)/60000;
+  const w=started?Math.round(ok/5/mins):0;
+  const acc=started&&accTotal?Math.max(0,Math.round((accTotal-errs)/accTotal*100)):100;
+  return{w,acc};
+}
+let accTotal=0,tEnd=0;
+function ui(){const s=stats();$("wpm").textContent=s.w;$("acc").textContent=s.acc+"%";$("err").textContent=errs;$("time").textContent=fmtLeft(left);$("prog").style.transform="scaleX("+(left/cfg.time)+")";return s}
+function reset(fresh=true){
+  clearInterval(tick);started=false;over=false;typed="";errs=0;accTotal=0;left=cfg.time;$("inp").value="";
+  if(fresh||!text){fixed=false;text=build()}
+  $("text").scrollTop=0;$("arena").classList.remove("go");render(true);ui();
+}
+function finish(){
+  if(over)return;
+  over=true;tEnd=performance.now();clearInterval(tick);const s=ui();
+  const nb=s.w>best&&s.w>0;if(nb)best=s.w;
+  hist.unshift({w:s.w,a:s.acc,t:cfg.time});hist=hist.slice(0,5);
+  try{localStorage.setItem("ks_hist",JSON.stringify(hist));localStorage.setItem("ks_best",best)}catch(e){}
+  $("rw").textContent=s.w;$("ra").textContent=s.acc+"%";$("re").textContent=errs;
+  $("badge").textContent=nb?"New personal best!":(fixed&&left>0?"Practice complete":"Time’s up");doneSnd();
+  $("modal").classList.add("show");$("again").focus();drawSide();
+}
+function drawSide(){
+  $("best").textContent=best;
+  $("hist").innerHTML=hist.length?hist.map(h=>`<li><span>${h.w} wpm</span><span>${h.a}% · ${fmtDur(h.t)}</span></li>`).join(""):'<li class="empty">No tests yet</li>';
+}
+function start(){
+  started=true;t0=performance.now();$("arena").classList.add("go");
+  tick=setInterval(()=>{left=Math.max(0,cfg.time-Math.floor((performance.now()-t0)/1000));ui();if(left<=0)finish()},250);
+}
+$("inp").addEventListener("input",e=>{
+  if(over)return;
+  const v=e.target.value.replace(/\n/g,"");
+  if(e.target.value!==v)e.target.value=v;
+  try{e.target.setSelectionRange(v.length,v.length)}catch(_){}
+  if(!started&&v)start();
+  if(v.length>typed.length){let bad=false;for(let i=typed.length;i<v.length;i++){accTotal++;if(v[i]!==text[i]){errs++;bad=true}}bad?beepSnd():clickSnd()}
+  typed=v;
+  if(!fixed&&text.length-typed.length<80){text+=build(true)}
+  render();ui();
+  if(fixed&&typed.length>=text.length)finish();
+});
+$("inp").addEventListener("paste",e=>e.preventDefault());
+$("inp").addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(e.key))e.preventDefault()});
+document.addEventListener("pointerdown",ac,{once:true});document.addEventListener("keydown",ac,{once:true});
+const focusInp=()=>{if(!over)$("inp").focus()};
+$("arena").addEventListener("click",focusInp);
+document.addEventListener("keydown",e=>{
+  const m=$("modal").classList.contains("show"),ae=document.activeElement;
+  if(e.key==="Escape"){closeSide();if(m){$("modal").classList.remove("show");reset(true)}}
+  if(e.key==="Tab"&&(ae===$("inp")||ae===document.body)){e.preventDefault();$("restart").click()}
+  if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&e.key.length===1&&!m&&(ae.tagName!=="BUTTON"||e.key!==" ")&&ae.id!=="inp")focusInp();
+});
+$("wdbtn").onclick=()=>{
+  text=(wd[0]+" ").repeat(5)+wd[3];fixed=true;reset(false);
+  $("arena").scrollIntoView({behavior:"smooth",block:"center"});focusInp();
+};
+$("restart").onclick=()=>{reset(false);focusInp()};
+$("newtext").onclick=()=>{reset(true);focusInp()};
+$("again").onclick=()=>{$("modal").classList.remove("show");reset(true);focusInp()};
+document.querySelectorAll(".chips").forEach(g=>g.addEventListener("click",e=>{
+  const b=e.target.closest(".chip");if(!b)return;
+  g.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));b.classList.add("on");
+  const k=g.dataset.key;cfg[k]=k==="time"?+b.dataset.v:b.dataset.v;reset(true);closeSide();
+}));
+$("theme").onclick=()=>{
+  const r=document.documentElement,n=r.dataset.theme==="dark"?"light":"dark";r.dataset.theme=n;
+  try{localStorage.setItem("ks_theme",n)}catch(e){}
+};
+const openSide=()=>{$("side").classList.add("open");$("scrim").classList.add("open")};
+function closeSide(){$("side").classList.remove("open");$("scrim").classList.remove("open")}
+$("menu").onclick=openSide;$("scrim").onclick=closeSide;
+document.querySelectorAll(".links a").forEach(a=>a.addEventListener("click",()=>{
+  document.querySelectorAll(".links a").forEach(x=>x.classList.remove("on"));a.classList.add("on");
+}));
+drawSide();reset(true);
+</script>
+</body>
+</html>
