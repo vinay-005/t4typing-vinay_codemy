@@ -68,11 +68,11 @@ A "word" is counted as 5 characters, which is the standard typing-test conventio
 
 ## Project Structure
 
-'''
+```
 t4typing/
 ├── index.html    # the whole app (HTML, CSS and JS)
 └── README.md
-'''
+```
 
 ## Tech Stack
 
