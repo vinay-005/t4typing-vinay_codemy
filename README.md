@@ -24,7 +24,7 @@ A fast, beautiful typing speed test that runs entirely in your browser. No sign-
 
 No build step or dependencies are needed.
 
-'''bash
+```bash
 # Clone the repository
 git clone https://github.com/your-username/t4typing.git
 cd t4typing
@@ -33,7 +33,7 @@ cd t4typing
 open index.html        # macOS
 start index.html       # Windows
 xdg-open index.html    # Linux
-'''
+```
 
 You can also just double-click 'index.html'.
 
@@ -59,10 +59,10 @@ You can also just double-click 'index.html'.
 
 ## How WPM Is Calculated
 
-'''
+```
 WPM = (correct characters / 5) / minutes
 Accuracy = (total typed − mistakes) / total typed × 100
-'''
+```
 
 A "word" is counted as 5 characters, which is the standard typing-test convention.
 
